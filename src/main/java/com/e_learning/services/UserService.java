@@ -45,4 +45,7 @@ UserDto registerNewUser(UserDto user);
     //---------faculty add and update ---------------
     UserDto updateFaculty(Integer userId, String faculty);
     UserDto addFaculty(Integer userId, String faculty);
+    
+    //------discount--------------
+    UserDto addDiscount(Integer userId, String discount);
 }

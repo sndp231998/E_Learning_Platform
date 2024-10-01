@@ -368,7 +368,14 @@ private OtpRequestService sendmsg;
         User savedUser = userRepo.save(user);
         return modelMapper.map(savedUser, UserDto.class);
     }
-//----------------------------------------------------------------------------------------------
-
+//-----------------------------Add descount-----------------------------------------------------------------
+    @Override
+    public UserDto addDiscount(Integer userId, String discount) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+user.setDiscount(discount);
+        User savedUser = userRepo.save(user);
+        return modelMapper.map(savedUser, UserDto.class);
+    }
 	
 }

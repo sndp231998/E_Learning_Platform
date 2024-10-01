@@ -43,6 +43,9 @@ public class UserDto {
 	 @Column(name = "otp")
    private String otp;
 	
+	 
+	 private String discount;
+
 //	private LocalDateTime SubscriptionValidDate;
 //	
 //	private LocalDateTime date_Of_Role_Changed;

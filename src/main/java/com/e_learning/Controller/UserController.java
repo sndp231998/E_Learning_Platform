@@ -38,6 +38,7 @@ public class UserController {
 	    private RateLimitingService rateLimitingService;
 
 	// POST-create user
+	 @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
 	@PostMapping("/")
 	public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
 		UserDto createUserDto = this.userService.createUser(userDto);
@@ -45,6 +46,7 @@ public class UserController {
 	}
 
 	// PUT- update user
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{userId}")
 	public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable("userId") Integer uid) {
 		UserDto updatedUser = this.userService.updateUser(userDto, uid);
@@ -61,6 +63,7 @@ public class UserController {
 	}
 
 	// GET - user get
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/")
 	public ResponseEntity<List<UserDto>> getAllUsers() {
 		 rateLimitingService.checkRateLimit("test-api-key");
@@ -72,7 +75,7 @@ public class UserController {
 	public ResponseEntity<UserDto> getSingleUser(@PathVariable Integer userId) {
 		return ResponseEntity.ok(this.userService.getUserById(userId));
 	}
-	
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/college/{collegename}")
     public ResponseEntity<List<UserDto>> getUsersByCollegeName(@PathVariable String collegename) {
         List<UserDto> users = userService.getUsersByCollegeName(collegename);
@@ -94,6 +97,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 	
+	@PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/role/{roleName}")
     public ResponseEntity<List<UserDto>> getUsersByRole(@PathVariable String roleName) {
         List<UserDto> users = userService.getUsersByRole(roleName);
@@ -112,6 +116,7 @@ public class UserController {
 
     // Add Faculty API
  // Add Faculty API
+   
     @PostMapping("/{userId}/faculty")
     public ResponseEntity<UserDto> addFaculty(
             @PathVariable Integer userId, 
@@ -120,4 +125,13 @@ public class UserController {
         UserDto newUser = userService.addFaculty(userId, faculty);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
  
+    }
+    
+    @PostMapping("/{userId}/discount")
+    public ResponseEntity<UserDto> addDiscount(
+            @PathVariable Integer userId, 
+            @RequestBody Map<String, String> body) {
+        String discount = body.get("discount");
+        UserDto newUser = userService.addFaculty(userId, discount);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
 }}

@@ -51,6 +51,7 @@ public class PostController {
 	private String path;
 	
 //	create
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/user/{userId}/category/{categoryId}/posts")
 	public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto, @PathVariable Integer userId,
 			@PathVariable Integer categoryId) {
@@ -80,7 +81,7 @@ public class PostController {
 	}
 
 	// get by category
-
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/category/{categoryId}/posts")
 	public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable Integer categoryId) {
 
@@ -98,7 +99,7 @@ public class PostController {
 	
 
 	// get all posts
-
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/posts")
 	public ResponseEntity<PostResponse> getAllPost(
 			@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
@@ -111,7 +112,7 @@ public class PostController {
 	}
 
 	// get post details by id
-
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/posts/{postId}")
 	public ResponseEntity<PostDto> getPostById(@PathVariable Integer postId) {
 
@@ -121,6 +122,7 @@ public class PostController {
 	}
 
 	// delete post
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/posts/{postId}")
 	public ApiResponse deletePost(@PathVariable Integer postId) {
 		this.postService.deletePost(postId);
@@ -128,7 +130,7 @@ public class PostController {
 	}
 
 	// update post
-
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/posts/{postId}")
 	public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable Integer postId) {
 
@@ -145,7 +147,7 @@ public class PostController {
 	}
 
 	// post image upload
-
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/post/image/upload/{postId}")
 	public ResponseEntity<PostDto> uploadPostImage(@RequestParam("image") MultipartFile image,
 			@PathVariable Integer postId) throws IOException {

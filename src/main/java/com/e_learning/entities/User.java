@@ -54,6 +54,8 @@ public class User implements UserDetails {
     private LocalDateTime subscriptionValidDate;
     private LocalDateTime date_Of_Role_Changed;
     private LocalDateTime lastNotificationDate;
+    
+    private String discount;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", 
