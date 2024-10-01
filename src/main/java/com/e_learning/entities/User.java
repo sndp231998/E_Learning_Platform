@@ -47,7 +47,6 @@ public class User implements UserDetails {
 //---------------------------------------
     private String mobileNo;
 
-    @Column(name = "otp")
     private String otp;
 
     private LocalDateTime otpValidUntil;

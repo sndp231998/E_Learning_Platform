@@ -1,6 +1,7 @@
 package com.e_learning.Controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -98,5 +99,25 @@ public class UserController {
         List<UserDto> users = userService.getUsersByRole(roleName);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+//------Faculty add and update ----
+ 
+ // Update Faculty API
+    @PutMapping("/{userId}/faculty")
+    public ResponseEntity<UserDto> updateFaculty(
+            @PathVariable Integer userId, 
+            @RequestParam String faculty) {
+        UserDto updatedUser = userService.updateFaculty(userId, faculty);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
 
-}
+    // Add Faculty API
+ // Add Faculty API
+    @PostMapping("/{userId}/faculty")
+    public ResponseEntity<UserDto> addFaculty(
+            @PathVariable Integer userId, 
+            @RequestBody Map<String, String> body) {
+        String faculty = body.get("faculty");
+        UserDto newUser = userService.addFaculty(userId, faculty);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+ 
+}}

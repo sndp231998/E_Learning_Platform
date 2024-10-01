@@ -33,14 +33,14 @@ public class OtpRequestServiceImpl implements OtpRequestService {
     private RestTemplate restTemplate;
 
     private static final String SMS_API_URL = "https://sms.aakashsms.com/sms/v3/send";
-    private static final String SMS_API_TOKEN = "e8d63c5cb1c2e22408180c4ce72cf28471fecd48bb27e0106910ddf6cad8243a";
+    private static final String SMS_API_TOKEN = "3b78c6b238c58669f6dbb893261c9e6480fba95361865f0bc143bf03df7ff341";
 
     public String generateOtp() {
         Random random = new Random();
         int otp = 100000 + random.nextInt(900000);
         return String.valueOf(otp);
     }
-
+  
     public void sendOtpSms(String mobileNo, String otp) {
         String url = String.format("%s?auth_token=%s&to=%s&text=Your OTP: %s",
                 SMS_API_URL, SMS_API_TOKEN, mobileNo, otp);
@@ -53,6 +53,23 @@ public class OtpRequestServiceImpl implements OtpRequestService {
         logger.info("Response from SMS API: {}", response);
     }
 
+    
+    
+    @Override
+    public void sendMessage(String mobileNo, String message) {
+        String url = String.format("%s?auth_token=%s&to=%s&text=%s",
+                SMS_API_URL, SMS_API_TOKEN, mobileNo, message);
+
+        logger.info("Sending message to mobile number: {}", mobileNo);
+        logger.info("Message: {}", message);
+        logger.info("Final URL: {}", url);
+
+        String response = restTemplate.getForObject(url, String.class);
+        logger.info("Response from SMS API: {}", response);
+    }
+    
+    
+    
     @Override
     public OtpRequest createOtp(OtpRequest otpReq) {
         if (otpReq.getMobileNo() == null || otpReq.getMobileNo().isEmpty()) {
@@ -74,5 +91,9 @@ public class OtpRequestServiceImpl implements OtpRequestService {
         
         return otpRequestRepo.save(otpReq);
     }
+
+
+
+	
 
 }

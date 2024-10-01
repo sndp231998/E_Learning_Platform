@@ -1,5 +1,6 @@
 package com.e_learning.entities;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -11,17 +12,21 @@ import javax.persistence.ManyToOne;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 @Entity
 @Data
 @NoArgsConstructor
-public class OtpRequest {
-	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer Id;
-    private String mobileNo;
-    private String otp;
-   private  LocalDateTime OtpValidUntil;
-   @ManyToOne
-   private User user;
-   private String purpose;
+public class ForgetPassword {
+	  @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer fid;
+	
+	  private String phnum;
+	private LocalDateTime date;
+	
+	private String otp;
+	private String newPassword;
+	
+	 @ManyToOne
+	    private User user;
 }

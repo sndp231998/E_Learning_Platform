@@ -12,21 +12,26 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.e_learning.entities.ForgetPassword;
 import com.e_learning.entities.OtpRequest;
 import com.e_learning.entities.User;
 import com.e_learning.exceptions.ApiException;
 import com.e_learning.exceptions.ResourceNotFoundException;
+import com.e_learning.payloads.ForgetPasswordDto;
 import com.e_learning.payloads.JwtAuthRequest;
 import com.e_learning.payloads.JwtAuthResponse;
 import com.e_learning.payloads.UserDto;
 import com.e_learning.repositories.UserRepo;
 import com.e_learning.security.JwtTokenHelper;
+import com.e_learning.services.ForgetPasswordService;
 import com.e_learning.services.OtpRequestService;
 import com.e_learning.services.UserService;
 
@@ -54,6 +59,8 @@ public class AuthController {
 	private ModelMapper mapper;
 	@Autowired
 	private UserService userService;
+	 @Autowired
+	    private ForgetPasswordService forgetPasswordService;
 
 	@PostMapping("/login")
 	public ResponseEntity<JwtAuthResponse> createToken(@RequestBody JwtAuthRequest request) throws Exception {
@@ -68,14 +75,19 @@ public class AuthController {
 	}
 	
 	
-
+//otp for registration
 	    @PostMapping("/get-phone-number")
 	    public ResponseEntity<OtpRequest> createOtp(@RequestBody OtpRequest otpReq) {
+	    	
 	    	OtpRequest ph = otpRequestService.createOtp(otpReq);
+	    	
 	    			
 	        return ResponseEntity.ok(ph);
 	    }
 	
+	    
+
+
 // register new user api
 
 	@PostMapping("/register")
@@ -112,8 +124,25 @@ public class AuthController {
 
 	}
 	
-	
-    
+	//--------------Forget password-----------------
+	//otp for forget password
+	//get otp
+    @PostMapping("/forgetpw")
+    public ResponseEntity<ForgetPassword> createForgetPassword(@RequestBody ForgetPasswordDto forgetPasswordDto) {
+        ForgetPassword forgetPassword = forgetPasswordService.createForget(forgetPasswordDto);
+        return ResponseEntity.ok(forgetPassword);
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<String> updatePassword(@RequestBody ForgetPassword request) {
+        try {
+        	forgetPasswordService.updatePassword(request.getPhnum(), request.getOtp(), request.getNewPassword());
+            return ResponseEntity.ok("Password updated successfully");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
 
 	 
 }

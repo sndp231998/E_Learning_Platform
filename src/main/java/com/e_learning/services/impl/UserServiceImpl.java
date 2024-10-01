@@ -28,6 +28,7 @@ import com.e_learning.repositories.OtpRequestRepo;
 import com.e_learning.repositories.PaymentRepo;
 import com.e_learning.repositories.RoleRepo;
 import com.e_learning.repositories.UserRepo;
+import com.e_learning.services.OtpRequestService;
 import com.e_learning.services.UserService;
 
 
@@ -56,7 +57,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private NotificationService notificationService;
 
-
+    @Autowired
+private OtpRequestService sendmsg;
     
     @Override
     public UserDto registerNewUser(UserDto userDto) {
@@ -104,16 +106,69 @@ public class UserServiceImpl implements UserService {
         user.setMobileNo(mobileNo);
         
         User newUser = this.userRepo.save(user);
+        
+        
+        String welcomeMessage = String.format("Welcome, %s! We're excited to have you on our eLearning platform. Dive in and enjoy the journey ahead! Thank you for choosing us, Utkrista Shikshya", user.getName());
+        sendmsg.sendMessage(user.getMobileNo(), welcomeMessage); // Assuming notificationService sends SMS
+
         return this.modelMapper.map(newUser, UserDto.class);
     }
-
     
+    
+    
+    
+  
+    //forget password----------------
+    //get otp from user 
     @Override
-    public UserDto createUser(UserDto userDto) {
-        User user = this.dtoToUser(userDto);
-        User savedUser = this.userRepo.save(user);
-        return this.userToDto(savedUser);
+    public UserDto GetOtp(UserDto userDto, Integer userId) {
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+
+        // Saving OTP to User table (optional step)
+        user.setOtp(userDto.getOtp());
+        
+        // Save and return updated user with OTP
+        return modelMapper.map(userRepo.save(user), UserDto.class);
     }
+    
+    //forget password 
+	@Override
+	public UserDto updatePassword(UserDto userDto, Integer userId) {
+		User user = this.userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+
+		String otp=userDto.getOtp();
+		if(otp==null) {
+			throw new IllegalArgumentException("OTP must be provided");
+		}
+		// Fetch the OTP from the database
+	    List<OtpRequest> otpRequests = this.otpRepo.findByOtp(otp);
+	    OtpRequest validOtpRequest = null;
+	    for (OtpRequest otpRequest : otpRequests) {
+	        if (otpRequest.getOtp() != null && otpRequest.getOtp().equals(otp)) {
+	            LocalDateTime otpValidUntil = otpRequest.getOtpValidUntil();
+	            if (otpValidUntil != null) {
+	                Instant otpValidUntilInstant = otpValidUntil.atZone(ZoneId.systemDefault()).toInstant();
+	                Instant now = Instant.now();
+	                if (otpValidUntilInstant.isAfter(now)) {
+	                    validOtpRequest = otpRequest;
+	                    break; // Found valid OTP, exit loop
+	                }
+	            }
+	        }
+	    }
+	    if (validOtpRequest == null) {
+	        throw new IllegalArgumentException("Invalid or expired OTP");
+	    }
+	    // OTP is valid, proceed to update the password
+	    user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+	    User updatedUser = userRepo.save(user);
+
+	    return modelMapper.map(updatedUser, UserDto.class);
+		
+	}
+    
 
     @Override
     public UserDto updateUser(UserDto userDto, Integer userId) {
@@ -128,6 +183,14 @@ public class UserServiceImpl implements UserService {
         User updatedUser = this.userRepo.save(user);
         return this.userToDto(updatedUser);
     }
+    
+    @Override
+    public UserDto createUser(UserDto userDto) {
+        User user = this.dtoToUser(userDto);
+        User savedUser = this.userRepo.save(user);
+        return this.userToDto(savedUser);
+    }
+
 
     @Override
     public UserDto getUserById(Integer userId) {
@@ -217,7 +280,7 @@ public class UserServiceImpl implements UserService {
         logger.info("Number of users found: {}", users.size());
 
         for (User user : users) {
-            if (user.getSubscriptionValidDate() != null) {
+            if (user.getSubscriptionValidDate() != null) { 
                 LocalDateTime validDate = user.getSubscriptionValidDate();
                 logger.info("Processing user: {}, Subscription Valid Date: {}", user.getEmail(), validDate);
 
@@ -280,6 +343,32 @@ public class UserServiceImpl implements UserService {
 
         logger.info("sendSubscriptionExpiryWarnings method completed");
     }
+
+
+
+//----------------Faculty--------------------------------------------------------
+ // Method to update faculty
+    @Override
+    public UserDto updateFaculty(Integer userId, String faculty) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+
+        user.setFaculty(faculty);
+        User updatedUser = userRepo.save(user);
+        return modelMapper.map(updatedUser, UserDto.class);
+    }
+
+    // Method to add new faculty for the user
+    @Override
+    public UserDto addFaculty(Integer userId, String faculty) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+
+        user.setFaculty(faculty); // Adding or updating faculty
+        User savedUser = userRepo.save(user);
+        return modelMapper.map(savedUser, UserDto.class);
+    }
+//----------------------------------------------------------------------------------------------
 
 	
 }

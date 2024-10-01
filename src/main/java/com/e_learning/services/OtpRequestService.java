@@ -5,10 +5,13 @@ import com.e_learning.entities.OtpRequest;
 
 public interface OtpRequestService {
 
-	//create
+	      //create for reg
 			OtpRequest createOtp(OtpRequest otpReq);
 			
-			//ph num
-			 OtpRequest SendOtp(OtpRequest otpReq, String phnumber);
+			 // Send OTP
+		    OtpRequest SendOtp(OtpRequest otpReq, String phnumber);
+
+			void sendMessage(String mobileNo,String message);
 			
+			 void sendOtpSms(String mobileNo,String otp);
 }

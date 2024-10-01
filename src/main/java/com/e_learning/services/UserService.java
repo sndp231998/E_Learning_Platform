@@ -11,7 +11,7 @@ public interface UserService {
 	
 UserDto registerNewUser(UserDto user);
 	
-//User GetOnlyPhoneNum(User user);
+//-----------User GetOnlyPhoneNum(User user);------------
 
 	UserDto createUser(UserDto user);
 
@@ -38,5 +38,11 @@ UserDto registerNewUser(UserDto user);
     
    // List<UserDto>getUsersByPayment(String )
 	
-
+//---------------forget password---------------
+    UserDto updatePassword(UserDto user ,Integer userId);
+    UserDto GetOtp(UserDto user,Integer userId);
+    
+    //---------faculty add and update ---------------
+    UserDto updateFaculty(Integer userId, String faculty);
+    UserDto addFaculty(Integer userId, String faculty);
 }
