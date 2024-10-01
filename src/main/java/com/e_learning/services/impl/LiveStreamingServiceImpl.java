@@ -12,6 +12,7 @@ import com.e_learning.entities.LiveStreaming;
 import com.e_learning.entities.User;
 import com.e_learning.exceptions.ResourceNotFoundException;
 import com.e_learning.payloads.LiveStreamingDto;
+import com.e_learning.payloads.UserDto;
 import com.e_learning.repositories.CategoryRepo;
 import com.e_learning.repositories.LiveStreamingRepo;
 import com.e_learning.repositories.UserRepo;
@@ -90,4 +91,21 @@ public class LiveStreamingServiceImpl implements LiveStreamingService {
 
         return liveDtos;
     }
+    public LiveStreaming dtoToLiveStreaming(LiveStreamingDto liveStreamingDto) {
+        return this.modelMapper.map(liveStreamingDto, LiveStreaming.class);
+    }
+
+    public LiveStreamingDto LiveStreamingToDto(LiveStreaming liveStreaming) {
+        return this.modelMapper.map(liveStreaming, LiveStreamingDto.class);
+    }
+
+    @Override
+    public List<LiveStreamingDto> getAllLives() {
+        List<LiveStreaming> lives = liveRepo.findAll();
+        return lives.stream()
+                    .map(this::LiveStreamingToDto) // Ensure this method returns LiveStreamingDto
+                    .collect(Collectors.toList());
+    }
+
+
 }

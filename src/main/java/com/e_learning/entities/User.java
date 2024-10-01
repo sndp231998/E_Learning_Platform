@@ -1,28 +1,15 @@
 package com.e_learning.entities;
-
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,39 +20,47 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User implements UserDetails {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @Column(name = "user_name", nullable = false, length = 100)
+    @NotBlank(message = "Name is required")
     private String name;
 
     @Column(unique = true)
+    @NotBlank(message = "Email is required")
+    @Email(message = "Please provide a valid email address")
     private String email;
-     
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", 
+             message = "Password must contain at least one uppercase letter, one number, and one special character")
     private String password;
-//---------------------------------------
+
+    @Column(unique = true)
+    @NotBlank(message = "Mobile number is required")
+    @Pattern(regexp = "^\\d{10}$", message = "Mobile number must be 10 digits")
     private String mobileNo;
 
     private String otp;
-
     private LocalDateTime otpValidUntil;
-    //------------------------------------------
-    
-    private String collegename;
 
+    private String collegename;
     private String faculty;
-    
-    private LocalDateTime SubscriptionValidDate;
-    
+
+    private LocalDateTime subscriptionValidDate;
     private LocalDateTime date_Of_Role_Changed;
-    
     private LocalDateTime lastNotificationDate;
-    
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "id"))
+    @JoinTable(name = "user_role", 
+        joinColumns = @JoinColumn(name = "user", referencedColumnName = "id"), 
+        inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
-    
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = this.roles.stream()

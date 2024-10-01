@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.e_learning.payloads.LiveStreamingDto;
 import com.e_learning.payloads.PostDto;
+import com.e_learning.payloads.UserDto;
 
 
 public interface LiveStreamingService {
@@ -13,9 +14,11 @@ public interface LiveStreamingService {
 			LiveStreamingDto createLiveStreaming(LiveStreamingDto liveDto,Integer userId,Integer categoryId);
 
 			
-			//get all posts by category
+			//get all lives by category
 			
 			List<LiveStreamingDto> getLiveStreamingByCategory(Integer categoryId);
 			
 			List<LiveStreamingDto>getLiveStreamingsByUserFaculty(Integer userId);
+			
+			List<LiveStreamingDto> getAllLives();
 }

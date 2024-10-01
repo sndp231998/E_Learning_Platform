@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.e_learning.entities.User;
 import com.e_learning.payloads.LiveStreamingDto;
-
+import com.e_learning.payloads.UserDto;
 import com.e_learning.services.LiveStreamingService;
+import com.e_learning.services.impl.RateLimitingService;
 
 
 @RestController
@@ -28,6 +29,8 @@ public class LiveStreamingController {
 	@Autowired
 	private LiveStreamingService liveService;
 	
+	 @Autowired
+	    private RateLimitingService rateLimitingService;
 //	create
 	@PostMapping("/user/{userId}/category/{categoryId}/lives")
 	public ResponseEntity<LiveStreamingDto> createLiveStreaming(@RequestBody LiveStreamingDto liveDto, @PathVariable Integer userId,
@@ -63,4 +66,12 @@ public class LiveStreamingController {
 		        List<LiveStreamingDto> lives = this.liveService.getLiveStreamingsByUserFaculty(userId);
 		        return new ResponseEntity<>(lives, HttpStatus.OK);
 		    }
+		
+		
+		// GET - all live get
+		@GetMapping("/lives")
+		public ResponseEntity<List<LiveStreamingDto>> getAllLives() {
+			 rateLimitingService.checkRateLimit("test-api-key");
+			return ResponseEntity.ok(this.liveService.getAllLives());
+		}
 }
