@@ -25,7 +25,7 @@ UserDto registerNewUser(UserDto user);
 	
 	List<UserDto> getUsersByCollegeName(String collegename);  
 	
-	//--------------------------------------------
+	//--------------------role change------------------------
 	void addRoleToUser(String email, String roleName);
 	
 	void updateUserRoles();
@@ -43,9 +43,9 @@ UserDto registerNewUser(UserDto user);
     UserDto GetOtp(UserDto user,Integer userId);
     
     //---------faculty add and update ---------------
-    UserDto updateFaculty(Integer userId, String faculty);
-    UserDto addFaculty(Integer userId, String faculty);
     
+    UserDto updateFaculty(UserDto user, Integer userId);
     //------discount--------------
-    UserDto addDiscount(Integer userId, String discount);
+   //UserDto updateDiscount(Integer userId,String discount);
+    UserDto updateDiscount(UserDto user, Integer userId);
 }

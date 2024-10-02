@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -118,8 +119,8 @@ private OtpRequestService sendmsg;
     
     
   
-    //forget password----------------
-    //get otp from user 
+    //--------------------------forget password----------------
+    //--------------------------get otp from user --------
     @Override
     public UserDto GetOtp(UserDto userDto, Integer userId) {
         User user = this.userRepo.findById(userId)
@@ -183,6 +184,9 @@ private OtpRequestService sendmsg;
         User updatedUser = this.userRepo.save(user);
         return this.userToDto(updatedUser);
     }
+
+    
+    
     
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -234,26 +238,56 @@ private OtpRequestService sendmsg;
 
     @Override
     public void addRoleToUser(String email, String roleName) {
+        // Fetch user by email, throw exception if not found
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
+        // Fetch role by name, throw exception if not found
         Role role = roleRepo.findByName(roleName)
                 .orElseThrow(() -> new ResourceNotFoundException("Role", "name", roleName));
 
-        List<Payment> payments = paymentRepo.findByUser(user);
-        if (payments == null || payments.isEmpty()) {
-            throw new ResourceNotFoundException("Payment", "user", email);
+        // Check if role change is to "teacher" (no payment required)
+        if (roleName.equalsIgnoreCase("teacher")) {
+            user.getRoles().clear();  // Clear existing roles
+            user.getRoles().add(role);  // Add "teacher" role
+            user.setDate_Of_Role_Changed(LocalDateTime.now());  // Update role change date
+            userRepo.save(user);  // Save user
+            System.out.println("User role changed to Teacher.");
+            return;  // Return after role change
         }
 
-        Payment latestPayment = payments.get(0);
+        // Check if role change is to "subscribed" (payment required)
+        if (roleName.equalsIgnoreCase("subscribed")) {
+            List<Payment> payments = paymentRepo.findByUser(user);
+            
+            // If no payments found, throw exception
+            if (payments == null || payments.isEmpty()) {
+                throw new ResourceNotFoundException("Payment", "user", email);
+            }
 
-        user.getRoles().clear();
-        user.getRoles().add(role);
-        user.setDate_Of_Role_Changed(LocalDateTime.now());
-        user.setSubscriptionValidDate(LocalDateTime.parse(latestPayment.getValidDate(), FORMATTER));
+            // Get the latest payment
+            Payment latestPayment = payments.get(0);
 
-        userRepo.save(user);
+            // Ensure payment is valid (you can add more conditions if needed)
+            if (LocalDateTime.now().isAfter(LocalDateTime.parse(latestPayment.getValidDate(), FORMATTER))) {
+                throw new IllegalStateException("Payment is invalid or expired.");
+            }
+
+            // Clear existing roles and set "subscribed" role
+            user.getRoles().clear();
+            user.getRoles().add(role);
+            user.setDate_Of_Role_Changed(LocalDateTime.now());
+            user.setSubscriptionValidDate(LocalDateTime.parse(latestPayment.getValidDate(), FORMATTER));  // Set valid date
+
+            userRepo.save(user);  // Save user
+            System.out.println("User role changed to Subscribed after valid payment.");
+            return;
+        }
+
+        // Throw exception if roleName is neither "teacher" nor "subscribed"
+        throw new IllegalArgumentException("Invalid role change request.");
     }
+
 
     @Override
     public UserDto getUserByEmail(String email) {
@@ -346,36 +380,31 @@ private OtpRequestService sendmsg;
 
 
 
-//----------------Faculty--------------------------------------------------------
- // Method to update faculty
+//---------------Update-Faculty--------------------------------------------------------
     @Override
-    public UserDto updateFaculty(Integer userId, String faculty) {
-        User user = userRepo.findById(userId)
+    public UserDto updateFaculty(UserDto userDto, Integer userId) {
+        User user = this.userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
-
-        user.setFaculty(faculty);
-        User updatedUser = userRepo.save(user);
-        return modelMapper.map(updatedUser, UserDto.class);
+        
+        user.setFaculty(userDto.getFaculty());
+        logger.info("Faculty from service "+userDto.getFaculty());
+        User updatedUser = this.userRepo.save(user);
+        return this.userToDto(updatedUser);
+    }
+    //----------update discount only-------------
+    @Override
+    public UserDto updateDiscount(UserDto userDto, Integer userId) {
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+        
+        user.setDiscount(userDto.getDiscount());
+        logger.info("discount from service "+userDto.getDiscount());
+        User updatedUser = this.userRepo.save(user);
+        return this.userToDto(updatedUser);
+    }
+    
+        
     }
 
-    // Method to add new faculty for the user
-    @Override
-    public UserDto addFaculty(Integer userId, String faculty) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
-
-        user.setFaculty(faculty); // Adding or updating faculty
-        User savedUser = userRepo.save(user);
-        return modelMapper.map(savedUser, UserDto.class);
-    }
-//-----------------------------Add descount-----------------------------------------------------------------
-    @Override
-    public UserDto addDiscount(Integer userId, String discount) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
-user.setDiscount(discount);
-        User savedUser = userRepo.save(user);
-        return modelMapper.map(savedUser, UserDto.class);
-    }
 	
-}
+

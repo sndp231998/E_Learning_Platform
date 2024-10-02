@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,12 +37,13 @@ public class User implements UserDetails {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Size(min = 16, message = "Password must be at least 16 characters long")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).+$", 
     message = "Password must contain at least one uppercase letter, one number, and one special character")
     private String password;
 
     @Column(unique = true)
+    @Nullable 
     @NotBlank(message = "Mobile number is required")
     @Pattern(regexp = "^\\d{10}$", message = "Mobile number must be 10 digits")
     private String mobileNo;
@@ -54,6 +57,7 @@ public class User implements UserDetails {
     private LocalDateTime subscriptionValidDate;
     private LocalDateTime date_Of_Role_Changed;
     private LocalDateTime lastNotificationDate;
+    
     
     private String discount;
 

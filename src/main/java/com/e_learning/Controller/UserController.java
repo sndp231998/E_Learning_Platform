@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import com.e_learning.payloads.ApiResponse;
 import com.e_learning.payloads.UserDto;
 import com.e_learning.services.UserService;
 import com.e_learning.services.impl.RateLimitingService;
+import com.e_learning.services.impl.UserServiceImpl;
 
 
 
@@ -30,7 +33,7 @@ import com.e_learning.services.impl.RateLimitingService;
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
-
+	 private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	@Autowired
 	private UserService userService;
 	
@@ -106,32 +109,39 @@ public class UserController {
 //------Faculty add and update ----
  
  // Update Faculty API
-    @PutMapping("/{userId}/faculty")
-    public ResponseEntity<UserDto> updateFaculty(
-            @PathVariable Integer userId, 
-            @RequestParam String faculty) {
-        UserDto updatedUser = userService.updateFaculty(userId, faculty);
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-    }
+//    @PutMapping("/{userId}/faculty")
+//    public ResponseEntity<UserDto> updateFaculty(
+//            @PathVariable Integer userId, 
+//            @RequestParam String faculty) {
+//        UserDto updatedUser = userService.updateFaculty(userId, faculty);
+//        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+//    }
 
-    // Add Faculty API
- // Add Faculty API
-   
-    @PostMapping("/{userId}/faculty")
-    public ResponseEntity<UserDto> addFaculty(
-            @PathVariable Integer userId, 
-            @RequestBody Map<String, String> body) {
-        String faculty = body.get("faculty");
-        UserDto newUser = userService.addFaculty(userId, faculty);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
  
-    }
-    
-    @PostMapping("/{userId}/discount")
-    public ResponseEntity<UserDto> addDiscount(
-            @PathVariable Integer userId, 
-            @RequestBody Map<String, String> body) {
-        String discount = body.get("discount");
-        UserDto newUser = userService.addFaculty(userId, discount);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
-}}
+//    // Update Discount API
+//    @PutMapping("/{userId}/discount")
+//    public ResponseEntity<UserDto> updateDiscount(
+//            @PathVariable Integer userId, 
+//            @RequestParam String discount) {
+//        UserDto updatedUser = userService.updateDiscount(userId, discount);
+//        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+//    }
+	
+	
+	//@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/{userId}/discount")
+	public ResponseEntity<UserDto> updateDiscount(@Valid @RequestBody UserDto userDto, @PathVariable("userId") Integer uid) {
+		UserDto updatedDiscount = this.userService.updateDiscount(userDto, uid);
+		String a=userDto.getDiscount();
+		logger.info("discount form controller ..........................."+a);
+		return ResponseEntity.ok(updatedDiscount);
+	}
+	
+	@PutMapping("/{userId}/faculty")
+	public ResponseEntity<UserDto> updateFaculty(@Valid @RequestBody UserDto userDto, @PathVariable("userId") Integer uid) {
+		UserDto updatedfaculty = this.userService.updateFaculty(userDto, uid);
+		String a=userDto.getFaculty();
+		logger.info("faculty form controller ..........................."+a);
+		return ResponseEntity.ok(updatedfaculty);
+	}
+}
