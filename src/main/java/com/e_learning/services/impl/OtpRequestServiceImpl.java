@@ -42,7 +42,9 @@ public class OtpRequestServiceImpl implements OtpRequestService {
     }
   
     public void sendOtpSms(String mobileNo, String otp) {
-        String url = String.format("%s?auth_token=%s&to=%s&text=Your OTP: %s",
+        String url = String.format("%s?auth_token=%s&to=%s&text=Dear valuable Customer, OTP for Utkrista Shikshya is Your OTP: %s"
+        		+ "Thank you for choosing us! "
+        		+ "Utkrista Shikshya",
                 SMS_API_URL, SMS_API_TOKEN, mobileNo, otp);
 
         logger.info("Sending OTP to mobile number: {}", mobileNo);
