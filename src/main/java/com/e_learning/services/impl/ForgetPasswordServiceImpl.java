@@ -59,8 +59,14 @@ public class ForgetPasswordServiceImpl implements ForgetPasswordService {
             otpRequest.setOtp(otp); // Set generated OTP
             otpRequestService.createOtp(otpRequest);  // Save OTP request
             
+            
+//            Dear fname, OTP for your password reset is XXXXXX. Kindly do not share OTP.
+//            Thank you for choosing us!
+//            Utkrista Shikshya
             String personalizedMessage = String.format(
-                "Hi Mr./Ms. %s, your OTP is: %s. Please do not share this with anyone.", 
+                "Dear %s, OTP for your password reset is: %s.Kindly do not share otp "
+                + "Thank your for choosing us !"
+                + "Utkrista Shikshya", 
                 userName, otp);
             
             otpRequestService.sendMessage(mobileNo, personalizedMessage);

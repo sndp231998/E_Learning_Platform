@@ -26,13 +26,18 @@ public class PostDto {
 	
 	private String videoLink;
 	
-	private LocalDateTime addedDate;	
+	private LocalDateTime addedDate;
+	
+    private String mentor;
+    
+    private String price;
+    private String discount;
 	
 	private CategoryDto category;
 
 	private UserDto user;
 	
-	//private Set<CommentDto> comments=new HashSet<>();
+	
 
 
 }

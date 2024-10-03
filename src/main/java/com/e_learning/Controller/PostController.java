@@ -99,7 +99,7 @@ public class PostController {
 	
 
 	// get all posts
-	@PreAuthorize("hasRole('ADMIN')")
+	//@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/posts")
 	public ResponseEntity<PostResponse> getAllPost(
 			@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
@@ -147,7 +147,7 @@ public class PostController {
 	}
 
 	// post image upload
-	@PreAuthorize("hasRole('ADMIN')")
+	//@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/post/image/upload/{postId}")
 	public ResponseEntity<PostDto> uploadPostImage(@RequestParam("image") MultipartFile image,
 			@PathVariable Integer postId) throws IOException {

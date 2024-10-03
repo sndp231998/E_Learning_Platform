@@ -63,6 +63,9 @@ public class PostServiceImpl implements PostService {
         Post post = this.modelMapper.map(postDto, Post.class);
         post.setImageName("default.png");
         post.setAddedDate(LocalDateTime.now()); 
+        post.setMentor(postDto.getMentor());
+        post.setDiscount(postDto.getDiscount());
+        post.setPrice(postDto.getPrice());
         post.setUser(user);
         post.setCategory(category);
 
@@ -82,6 +85,9 @@ public class PostServiceImpl implements PostService {
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
         post.setImageName(postDto.getImageName());
+        post.setDiscount(postDto.getDiscount());
+        post.setPrice(postDto.getPrice());
+        post.setMentor(postDto.getMentor());
         post.setCategory(category);
 
 
@@ -166,34 +172,6 @@ public class PostServiceImpl implements PostService {
         return postDtos;
     }
 
-//    @Override
-//    public List<PostDto> getPostsByCategoryTitle(String title) {
-//        // Fetch the category by title
-//    	List<String> userfaculty =userRepo.findAllFaculties();
-//    	System.out.println("faculty in Array:"+userfaculty);
-//    	
-//        Category category = this.categoryRepo.findByCategoryTitle(title);
-//        
-//        // Check if category is found
-//        if (category == null) {
-//            throw new ResourceNotFoundException("Category", "title", title);
-//        }
-//        
-//        // Fetch posts associated with the category
-//        List<Post> posts = this.postRepo.findByCategory(category);
-//        
-//        if(posts.isEmpty()) {
-//            System.out.println("No posts found for category: ");
-//            // Return an empty list if no posts are found
-//            return Collections.emptyList();
-//        }
-//        // Transform posts to PostDto
-//        List<PostDto> postDtos = posts.stream()
-//                                      .map(post -> this.modelMapper.map(post, PostDto.class))
-//                                      .collect(Collectors.toList());
-//        
-//        return postDtos;
-//    }
 
 	@Override
 	public List<PostDto> getPostsByUserFaculty(Integer userId) {

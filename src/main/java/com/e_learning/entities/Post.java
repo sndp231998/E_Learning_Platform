@@ -30,6 +30,11 @@ public class Post {
     private String videoLink;
 
     private LocalDateTime addedDate;
+    
+    private String mentor;
+    
+    private String price;
+    private String discount;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

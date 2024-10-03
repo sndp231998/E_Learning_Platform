@@ -108,8 +108,8 @@ private OtpRequestService sendmsg;
         
         User newUser = this.userRepo.save(user);
         
-        
-        String welcomeMessage = String.format("Welcome, %s! We're excited to have you on our eLearning platform. Dive in and enjoy the journey ahead! Thank you for choosing us, Utkrista Shikshya", user.getName());
+        String welcomeMessage = String.format("Welcome, %s! We're excited to have you on our eLearning platform. Dive in and enjoy the journey ahead! "
+        		+ "Thank you for choosing us, Utkrista Shikshya", user.getName());
         sendmsg.sendMessage(user.getMobileNo(), welcomeMessage); // Assuming notificationService sends SMS
 
         return this.modelMapper.map(newUser, UserDto.class);
@@ -247,7 +247,7 @@ private OtpRequestService sendmsg;
                 .orElseThrow(() -> new ResourceNotFoundException("Role", "name", roleName));
 
         // Check if role change is to "teacher" (no payment required)
-        if (roleName.equalsIgnoreCase("teacher")) {
+        if (roleName.equalsIgnoreCase("Role_TEACHER")) {
             user.getRoles().clear();  // Clear existing roles
             user.getRoles().add(role);  // Add "teacher" role
             user.setDate_Of_Role_Changed(LocalDateTime.now());  // Update role change date
@@ -257,7 +257,7 @@ private OtpRequestService sendmsg;
         }
 
         // Check if role change is to "subscribed" (payment required)
-        if (roleName.equalsIgnoreCase("subscribed")) {
+        if (roleName.equalsIgnoreCase("ROLE_SUBSCRIBED")) {
             List<Payment> payments = paymentRepo.findByUser(user);
             
             // If no payments found, throw exception
