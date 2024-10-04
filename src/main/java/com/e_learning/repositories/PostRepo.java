@@ -21,6 +21,6 @@ public interface PostRepo extends JpaRepository<Post, Integer> {
 	List<Post> searchByTitle(@Param("key") String title);
 	
 	
-
+	List<Post> findByCategoryCategoryId(Integer categoryId);
 }
 

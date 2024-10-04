@@ -198,6 +198,12 @@ public class PostServiceImpl implements PostService {
         return postDtos;
 
 	}
+	
+	@Override
+    public List<PostDto> getPostsByCategoryId(Integer categoryId) {
+        List<Post> posts = postRepo.findByCategoryCategoryId(categoryId);
+        return posts.stream().map(post -> modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+    }
 }
  
     

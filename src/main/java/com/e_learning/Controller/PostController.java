@@ -199,7 +199,12 @@ public class PostController {
 //        StreamUtils.copy(resource,response.getOutputStream())   ;
 //
 //    }
-
+    //Get Posts by category id
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<PostDto>> getPostsByCategoryId(@PathVariable Integer categoryId) {
+        List<PostDto> posts = postService.getPostsByCategoryId(categoryId);
+        return ResponseEntity.ok(posts);
+    }
     
     
 }
