@@ -1,5 +1,6 @@
 package com.e_learning.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,11 +8,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.e_learning.entities.Booked;
 import com.e_learning.entities.Category;
-
+import com.e_learning.entities.Post;
+import com.e_learning.entities.User;
 import com.e_learning.exceptions.ResourceNotFoundException;
+import com.e_learning.payloads.BookedDto;
 import com.e_learning.payloads.CategoryDto;
-
+import com.e_learning.payloads.PostDto;
 import com.e_learning.repositories.CategoryRepo;
 import com.e_learning.services.CategoryService;
 
@@ -26,9 +30,15 @@ public class CategoryServiceImpl implements CategoryService {
 	@Autowired
 	private ModelMapper modelMapper;
 
+
 	@Override
 	public CategoryDto createCategory(CategoryDto categoryDto) {
+		
 		Category cat = this.modelMapper.map(categoryDto, Category.class);
+		cat.setPrice(categoryDto.getPrice());
+		cat.setMainCategory(categoryDto.getMainCategory());
+		cat.setAddedDate(LocalDateTime.now());
+		cat.setImageName("default.png");
 		Category addedCat = this.categoryRepo.save(cat);
 		return this.modelMapper.map(addedCat, CategoryDto.class);
 	}
@@ -41,7 +51,10 @@ public class CategoryServiceImpl implements CategoryService {
 
 		cat.setCategoryTitle(categoryDto.getCategoryTitle());
 		cat.setCategoryDescription(categoryDto.getCategoryDescription());
-
+         cat.setPrice(categoryDto.getPrice());
+         cat.setAddedDate(LocalDateTime.now());
+         cat.setImageName(categoryDto.getImageName());
+         cat.setMainCategory(categoryDto.getMainCategory());
 		Category updatedcat = this.categoryRepo.save(cat);
 
 		return this.modelMapper.map(updatedcat, CategoryDto.class);
@@ -77,19 +90,42 @@ public class CategoryServiceImpl implements CategoryService {
 
 		return catDtos;
 	}
+	@Override
+    public List<CategoryDto> getLatestCategories() {
+        List<Category> categories = categoryRepo.findAllByOrderByAddedDateDesc();
+        return categories.stream()
+                .map(category -> modelMapper.map(category, CategoryDto.class))
+                .collect(Collectors.toList());
+    }
+	 @Override
+	    public List<CategoryDto> searchByCategoryTitle(String categoryTitle) {
+	        List<Category> categories = categoryRepo.findByCategoryTitleContainingIgnoreCase(categoryTitle);
+	        if (categories.isEmpty()) {
+	            throw new ResourceNotFoundException("Category", "title", categoryTitle);
+	        }
+	        return categories.stream()
+	                .map(cat -> modelMapper.map(cat, CategoryDto.class))
+	                .collect(Collectors.toList());
+	    }
 
-	
-//	@Override
-//    public List<UserDto> getUsersByCollegeName(String collegename) {
-//        List<User> users = userRepo.findByCollegename(collegename);
-//        return users.stream()
-//                    .map(user -> modelMapper.map(user, UserDto.class))
-//                    .collect(Collectors.toList());
-//    }
-//	@Override
-//	public List<CategoryDto> getUsersByCategoryTitle(String title) {
-//		List<Category>categorys
-//		return null;
-//	}
+	    @Override
+	    public List<CategoryDto> searchByMainCategory(String mainCategory) {
+	        List<Category> categories = categoryRepo.findByMainCategoryContainingIgnoreCase(mainCategory);
+	        if (categories.isEmpty()) {
+	            throw new ResourceNotFoundException("Category", "main category", mainCategory);
+	        }
+	        return categories.stream()
+	                .map(cat -> modelMapper.map(cat, CategoryDto.class))
+	                .collect(Collectors.toList());
+	    }
+	    
+	    @Override
+	    public List<CategoryDto> searchCategories(String keyword) {
+	        List<Category> categories = categoryRepo.findByCategoryTitleOrMainCategoryContaining(keyword);
+	        return categories.stream()
+	                .map(category -> modelMapper.map(category, CategoryDto.class))
+	                .collect(Collectors.toList());
+	    }
+	}
 
-}
+

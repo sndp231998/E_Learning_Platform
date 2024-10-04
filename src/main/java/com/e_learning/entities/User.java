@@ -33,7 +33,7 @@ public class User implements UserDetails {
 
     @Column(unique = true)
     @NotBlank(message = "Email is required")
-    @Email(message = "Please provide a valid email address")
+   // @Email(message = "Please provide a valid email address")
     private String email;
 
     @NotBlank(message = "Password is required")
@@ -51,9 +51,11 @@ public class User implements UserDetails {
     private String otp;
     private LocalDateTime otpValidUntil;
 
+    
+	private String imageName;
     private String collegename;
     private String faculty;
-
+    
     private LocalDateTime subscriptionValidDate;
     private LocalDateTime date_Of_Role_Changed;
     private LocalDateTime lastNotificationDate;

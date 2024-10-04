@@ -3,6 +3,8 @@ package com.e_learning.payloads;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -15,5 +17,9 @@ public class CategoryDto {
     @Size(min = 4, message = "Min size of category title is 4")
     private String categoryTitle;
 
+    private String mainCategory;
+    private String price;
+    private LocalDateTime addedDate;
     private String categoryDescription;
+    private String imageName;
 }

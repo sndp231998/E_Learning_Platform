@@ -30,8 +30,8 @@ public class PostDto {
 	
     private String mentor;
     
-    private String price;
-    private String discount;
+//    private String price;
+//    private String discount;
 	
 	private CategoryDto category;
 

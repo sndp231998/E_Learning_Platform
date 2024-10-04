@@ -1,7 +1,10 @@
 package com.e_learning.entities;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,10 +35,16 @@ public class Category {
 	@Column(name="description")
 	private String categoryDescription;
 	
+	private String mainCategory;
+	
+	 private LocalDateTime addedDate;
 
-//	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<ChildCategory> childcategories = new ArrayList<>();
+	private String price;
+	
+	private String imageName;
 	
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Post> posts = new ArrayList<>();
+	
+	
 }

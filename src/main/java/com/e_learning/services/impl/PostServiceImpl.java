@@ -64,8 +64,8 @@ public class PostServiceImpl implements PostService {
         post.setImageName("default.png");
         post.setAddedDate(LocalDateTime.now()); 
         post.setMentor(postDto.getMentor());
-        post.setDiscount(postDto.getDiscount());
-        post.setPrice(postDto.getPrice());
+//        post.setDiscount(postDto.getDiscount());
+//        post.setPrice(postDto.getPrice());
         post.setUser(user);
         post.setCategory(category);
 
@@ -85,8 +85,8 @@ public class PostServiceImpl implements PostService {
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
         post.setImageName(postDto.getImageName());
-        post.setDiscount(postDto.getDiscount());
-        post.setPrice(postDto.getPrice());
+//        post.setDiscount(postDto.getDiscount());
+//        post.setPrice(postDto.getPrice());
         post.setMentor(postDto.getMentor());
         post.setCategory(category);
 

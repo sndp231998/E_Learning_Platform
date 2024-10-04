@@ -64,6 +64,8 @@ private OtpRequestService sendmsg;
     @Override
     public UserDto registerNewUser(UserDto userDto) {
         User user = this.modelMapper.map(userDto, User.class);
+       user.setImageName("default.png");
+       user.setMobileNo(userDto.getEmail());
      // encoded the password
      		user.setPassword(this.passwordEncoder.encode(user.getPassword()));
      		// roles
@@ -180,6 +182,7 @@ private OtpRequestService sendmsg;
         user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());
         user.setCollegename(userDto.getCollegename());
+        user.setImageName(userDto.getImageName());
 
         User updatedUser = this.userRepo.save(user);
         return this.userToDto(updatedUser);

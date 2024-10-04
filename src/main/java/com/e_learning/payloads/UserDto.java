@@ -33,7 +33,7 @@ public class UserDto {
 	private String password;
 
 	private String collegename;
-	
+	private String imageName;
 	private String faculty;
 	
 	 @Column(name = "otp")

@@ -1,5 +1,7 @@
 package com.e_learning.security;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,5 +27,15 @@ public class CustomUserDetailService implements UserDetailsService {
 
 		return user;
 	}
+	
+	// New method to load by mobile number
+    public UserDetails loadUserByMobile(String mobileNum) throws UsernameNotFoundException {
+        // loading user from database by mobile number
+        User user = this.userRepo.findByMobileNo(mobileNum)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with mobile number: " + mobileNum));
+
+        return user;
+    }
+
 
 }

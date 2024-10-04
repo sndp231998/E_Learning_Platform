@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.e_learning.payloads.ApiResponse;
 
 
-
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	@ExceptionHandler(ResourceNotFoundException.class)
@@ -53,3 +51,4 @@ public class GlobalExceptionHandler {
 	        return ex.getMessage();
 	    }
 }
+

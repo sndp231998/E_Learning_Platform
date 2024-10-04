@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
 import org.hibernate.engine.jdbc.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.e_learning.config.AppConstants;
 import com.e_learning.entities.User;
 import com.e_learning.payloads.ApiResponse;
+import com.e_learning.payloads.ExamDto;
 import com.e_learning.payloads.PostDto;
 import com.e_learning.payloads.PostResponse;
 import com.e_learning.services.FileService;
@@ -148,19 +150,29 @@ public class PostController {
 
 	// post image upload
 	//@PreAuthorize("hasRole('ADMIN')")
-	@PostMapping("/post/image/upload/{postId}")
-	public ResponseEntity<PostDto> uploadPostImage(@RequestParam("image") MultipartFile image,
-			@PathVariable Integer postId) throws IOException {
-
-		PostDto postDto = this.postService.getPostById(postId);
-		
-		String fileName = this.fileService.uploadImage(path, image);
-		postDto.setImageName(fileName);
-		PostDto updatePost = this.postService.updatePost(postDto, postId);
-		return new ResponseEntity<PostDto>(updatePost, HttpStatus.OK);
-
-	}
-	
+//	@PostMapping("/post/file/upload/{postId}")
+//	public ResponseEntity<PostDto> uploadPostImage(@RequestParam("image") MultipartFile image,
+//			@PathVariable Integer postId) throws IOException {
+//
+//		PostDto postDto = this.postService.getPostById(postId);
+//		
+//		String fileName = this.fileService.uploadImage(path, image);
+//		postDto.setImageName(fileName);
+//		PostDto updatePost = this.postService.updatePost(postDto, postId);
+//		return new ResponseEntity<PostDto>(updatePost, HttpStatus.OK);
+//
+//	}
+//	
+	// Post method for file upload
+    @PostMapping("/post/file/upload/{postId}")
+    public ResponseEntity<PostDto> uploadExamFile(@RequestParam("file") MultipartFile file,
+                                                  @PathVariable Integer postId) throws IOException {
+        PostDto postDto = this.postService.getPostById(postId);
+        String fileName = this.fileService.uploadFile(path, file);
+        postDto.setImageName(fileName);  // Assuming you want to set the uploaded file name as imageName
+        PostDto updatedPost = this.postService.updatePost(postDto, postId);
+        return new ResponseEntity<>(updatedPost, HttpStatus.OK);
+    }
 
     //method to serve files
     @GetMapping(value = "/post/image/{imageName}",produces = MediaType.IMAGE_JPEG_VALUE)
@@ -168,12 +180,25 @@ public class PostController {
             @PathVariable("imageName") String imageName,
             HttpServletResponse response
     ) throws IOException {
+    	String fileExtension = FilenameUtils.getExtension(imageName).toLowerCase();
+        MediaType mediaType = MediaType.IMAGE_JPEG;  // Default
 
-        InputStream resource = this.fileService.getResource(path, imageName);
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        StreamUtils.copy(resource,response.getOutputStream())   ;
+        if (fileExtension.equals("png")) {
+            mediaType = MediaType.IMAGE_PNG;
+        } else if (fileExtension.equals("jpg") || fileExtension.equals("jpeg")) {
+            mediaType = MediaType.IMAGE_JPEG;
+        }
 
+        response.setContentType(mediaType.toString());
+        try (InputStream resource = this.fileService.getResource(path, imageName)) {
+            StreamUtils.copy(resource, response.getOutputStream());
+        }
     }
+//        InputStream resource = this.fileService.getResource(path, imageName);
+//        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+//        StreamUtils.copy(resource,response.getOutputStream())   ;
+//
+//    }
 
     
     

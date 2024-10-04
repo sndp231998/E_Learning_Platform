@@ -30,6 +30,7 @@ import com.e_learning.payloads.JwtAuthRequest;
 import com.e_learning.payloads.JwtAuthResponse;
 import com.e_learning.payloads.UserDto;
 import com.e_learning.repositories.UserRepo;
+import com.e_learning.security.CustomUserDetailService;
 import com.e_learning.security.JwtTokenHelper;
 import com.e_learning.services.ForgetPasswordService;
 import com.e_learning.services.OtpRequestService;
@@ -62,18 +63,25 @@ public class AuthController {
 	 @Autowired
 	    private ForgetPasswordService forgetPasswordService;
 
-	@PostMapping("/login")
-	public ResponseEntity<JwtAuthResponse> createToken(@RequestBody JwtAuthRequest request) throws Exception {
-		this.authenticate(request.getUsername(), request.getPassword());
-		UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
-		String token = this.jwtTokenHelper.generateToken(userDetails);
+	// Inject your custom service
+	 @Autowired
+	 private CustomUserDetailService customUserDetailService;
 
-		JwtAuthResponse response = new JwtAuthResponse();
-		response.setToken(token);
-		response.setUser(this.mapper.map((User) userDetails, UserDto.class));
-		return new ResponseEntity<JwtAuthResponse>(response, HttpStatus.OK);
-	}
-	
+	 @PostMapping("/login")
+		public ResponseEntity<JwtAuthResponse> createToken(@RequestBody JwtAuthRequest request) throws Exception {
+			this.authenticate(request.getUsername(), request.getPassword());
+			UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
+			//UserDetails userd=this.userDetailsService.loadUserByUsername(request.getMobilenum());
+			String token = this.jwtTokenHelper.generateToken(userDetails);
+
+			JwtAuthResponse response = new JwtAuthResponse();
+			response.setToken(token);
+			response.setUser(this.mapper.map((User) userDetails, UserDto.class));
+			return new ResponseEntity<JwtAuthResponse>(response, HttpStatus.OK);
+		}
+
+
+
 	
 //otp for registration
 	    @PostMapping("/get-phone-number")

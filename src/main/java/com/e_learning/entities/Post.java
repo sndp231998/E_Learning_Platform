@@ -2,9 +2,11 @@ package com.e_learning.entities;
 
 
 import java.time.LocalDateTime;
-import java.util.Date;
+
 
 import javax.persistence.*;
+
+
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,8 +35,9 @@ public class Post {
     
     private String mentor;
     
-    private String price;
-    private String discount;
+    //private String price;
+    
+    //private String discount;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -42,4 +45,6 @@ public class Post {
 
     @ManyToOne
     private User user;
+    
+   
 }

@@ -6,6 +6,8 @@ import com.e_learning.payloads.CategoryDto;
 
 public interface CategoryService {
 
+	
+	 List<CategoryDto> getLatestCategories();
 	// create
 		CategoryDto createCategory(CategoryDto categoryDto);
 
@@ -23,5 +25,11 @@ public interface CategoryService {
 		List<CategoryDto> getCategories();
 		
 		//List<CategoryDto> getUsersByCategoryTitle(String title); 
+		//-------search------------------
+		List<CategoryDto> searchByCategoryTitle(String categoryTitle);
+
+	    List<CategoryDto> searchByMainCategory(String mainCategory);
+	    
+	    List<CategoryDto> searchCategories(String keyword);
 
 }
