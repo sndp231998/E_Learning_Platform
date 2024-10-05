@@ -58,7 +58,7 @@ public class AnswerServiceImpl implements AnswerService {
         // Set additional properties on the Answer entity
         answer.setExam(exam);
         answer.setAddedDate(LocalDateTime.now());
-        answer.setImageName("default.png");
+        answer.setImageName("");
         answer.setUser(user);
 
         // Save the Answer entity to the repository

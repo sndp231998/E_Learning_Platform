@@ -46,7 +46,7 @@ public class ExamServiceImpl implements ExamService{
 	                .orElseThrow(() -> new ResourceNotFoundException("Category", "category id ", categoryId));
 
 	        Exam exam = this.modelMapper.map(examDto, Exam.class);
-	        exam.setImageName("default.png");
+	        exam.setImageName("");
 	        
 	        exam.setAddedDate(LocalDateTime.now()); 
 	        exam.setUser(user);

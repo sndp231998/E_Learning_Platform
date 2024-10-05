@@ -50,5 +50,13 @@ public class GlobalExceptionHandler {
 	    public String handleRateLimitExceededException(RateLimitExceededException ex) {
 	        return ex.getMessage();
 	    }
+	 
+	 @ExceptionHandler(IllegalArgumentException.class)
+	    public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException ex) {
+	        String message=ex.getMessage();
+	        ApiResponse apiResponse = new ApiResponse(message, true);
+			return new ResponseEntity<ApiResponse>(apiResponse, HttpStatus.BAD_REQUEST);
+	        
+	    }
 }
 

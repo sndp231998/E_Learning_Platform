@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.Random;
 
 import org.modelmapper.ModelMapper;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.e_learning.entities.OtpRequest;
+import com.e_learning.entities.User;
 import com.e_learning.repositories.OtpRequestRepo;
+import com.e_learning.repositories.UserRepo;
 import com.e_learning.services.OtpRequestService;
 
 @Service
@@ -31,6 +34,9 @@ public class OtpRequestServiceImpl implements OtpRequestService {
 
     @Autowired
     private RestTemplate restTemplate;
+    
+    @Autowired
+    private UserRepo userRepo;  
 
     private static final String SMS_API_URL = "https://sms.aakashsms.com/sms/v3/send";
     private static final String SMS_API_TOKEN = "3b78c6b238c58669f6dbb893261c9e6480fba95361865f0bc143bf03df7ff341";
@@ -83,6 +89,12 @@ public class OtpRequestServiceImpl implements OtpRequestService {
 
     @Override
     public OtpRequest SendOtp(OtpRequest otpReq, String phnumber) {
+    	Optional<User> mobileExists = userRepo.findByMobileNo(phnumber);
+    	
+    	if (mobileExists.isPresent()) {
+            logger.warn("Mobile number {} already exists in the system. OTP will not be sent.", phnumber);
+            throw new IllegalArgumentException("Mobile number already registered.");
+        }
         String ph = otpReq.getMobileNo();
         String otp = generateOtp();
         otpReq.setOtp(otp);

@@ -35,7 +35,7 @@ public class PaymentServiceImpl implements PaymentService{
 	                .orElseThrow(() -> new ResourceNotFoundException("User ", "User id", userId));
 		 Payment payment = this.modelMapper.map(paymentDto, Payment.class);
 	 
-          payment.setPayment_screensort("default.png");
+          payment.setPayment_screensort("");
           payment.setUser(user);
           payment.setAddedDate(LocalDateTime.now());
           

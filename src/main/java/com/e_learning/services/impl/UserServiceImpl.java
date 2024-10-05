@@ -64,7 +64,7 @@ private OtpRequestService sendmsg;
     @Override
     public UserDto registerNewUser(UserDto userDto) {
         User user = this.modelMapper.map(userDto, User.class);
-       user.setImageName("default.png");
+       user.setImageName("");
        user.setMobileNo(userDto.getEmail());
      // encoded the password
      		user.setPassword(this.passwordEncoder.encode(user.getPassword()));

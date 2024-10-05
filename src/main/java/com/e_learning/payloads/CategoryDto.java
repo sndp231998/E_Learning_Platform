@@ -16,7 +16,7 @@ public class CategoryDto {
     @NotBlank
     @Size(min = 4, message = "Min size of category title is 4")
     private String categoryTitle;
-
+    private String courseType;
     private String mainCategory;
     private String price;
     private LocalDateTime addedDate;
