@@ -37,8 +37,12 @@ public class BookedController {
 			@PathVariable Integer categoryId) {
 		
 		
-		BookedDto createBooked = this.bookedService.createBooked(bookedDto, userId, categoryId);
-		return new ResponseEntity<BookedDto>(createBooked, HttpStatus.CREATED);
+		 try {
+	            BookedDto createdBooked = this.bookedService.createBooked(bookedDto, userId, categoryId);
+	            return new ResponseEntity<>(createdBooked, HttpStatus.CREATED);
+	        } catch (IllegalStateException e) {
+	            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+	        }
 	}
 	
 	@PreAuthorize("hasRole('ADMIN')")
@@ -50,7 +54,8 @@ public class BookedController {
 	
 	@GetMapping("booked/user/{userId}")
     public ResponseEntity<List<BookedDto>> getBookedCoursesByUserId(@PathVariable Integer userId) {
-        List<BookedDto> bookedCourses = bookedService.getBookedCoursesByUserId(userId);
+        List<BookedDto> bookedCourses = bookedService.getBookedsByCategory(userId);
+        		
         return ResponseEntity.ok(bookedCourses);
     }
 }

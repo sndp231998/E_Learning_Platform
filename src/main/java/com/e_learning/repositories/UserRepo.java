@@ -12,11 +12,11 @@ import com.e_learning.entities.User;
 
 public interface UserRepo extends JpaRepository<User, Integer>{
 	
-	
-Optional<User> findByEmail(String email);
-Optional<User> findByMobileNo(String mobileNo);
+	Optional<User> findByEmail(String email);
+	Optional<User> findByMobileNo(String mobileNo);
 
-List<User> findByCollegename(String collegename);
+	List<User> findByCollegename(String collegename);
+
 
 @Query("SELECT DISTINCT u.faculty FROM User u")
 List<String> findAllFaculties();

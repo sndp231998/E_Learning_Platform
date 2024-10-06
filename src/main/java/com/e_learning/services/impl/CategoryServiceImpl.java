@@ -38,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
 		cat.setPrice(categoryDto.getPrice());
 		cat.setMainCategory(categoryDto.getMainCategory());
 		cat.setAddedDate(LocalDateTime.now());
-		cat.setImageName("default.png");
+		cat.setImageName("");
 		cat.setCourseType(categoryDto.getCourseType());
 		Category addedCat = this.categoryRepo.save(cat);
 		return this.modelMapper.map(addedCat, CategoryDto.class);

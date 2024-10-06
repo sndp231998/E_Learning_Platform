@@ -22,6 +22,7 @@ public class Booked {
 	    @JoinColumn(name = "category_id")
 	    private Category category;
 
-	    @ManyToOne
+	  @ManyToOne
+	  @JoinColumn(name = "user_id") // Specify the foreign key column for the User entity
 	    private User user;
 }

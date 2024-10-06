@@ -1,6 +1,7 @@
 package com.e_learning.services.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -35,22 +36,33 @@ public class BookedServiceImpl implements BookedService{
 	    @Autowired
 	    private CategoryRepo categoryRepo;
 
-		@Override
-		public BookedDto createBooked(BookedDto bookedDto, Integer userId, Integer categoryId) {
-			 User user = this.userRepo.findById(userId)
-		                .orElseThrow(() -> new ResourceNotFoundException("User ", "User id", userId));
 
-		        Category category = this.categoryRepo.findById(categoryId)
-		                .orElseThrow(() -> new ResourceNotFoundException("Category", "category id ", categoryId));
+	    @Override
+	    public BookedDto createBooked(BookedDto bookedDto, Integer userId, Integer categoryId) {
+	        // Fetch the user
+	        User user = this.userRepo.findById(userId)
+	                .orElseThrow(() -> new ResourceNotFoundException("User", "User id", userId));
 
-		        Booked booked = this.modelMapper.map(bookedDto, Booked.class);
-		        booked.setUser(user);
-		        booked.setCategory(category);
-		        Booked newBooked = this.bookedRepo.save(booked);
+	        // Fetch the category
+	        Category category = this.categoryRepo.findById(categoryId)
+	                .orElseThrow(() -> new ResourceNotFoundException("Category", "Category id", categoryId));
 
-		        return this.modelMapper.map(newBooked, BookedDto.class);
+	     // Check if the user already booked the category
+	        Optional<Booked> existingBooking = this.bookedRepo.findByUserAndCategory(user, category);
+	        if (existingBooking.isPresent()) {
+	            throw new IllegalArgumentException("User has already booked this category.");
+	        }
+	        // Proceed with creating the booking
+	        Booked booked = this.modelMapper.map(bookedDto, Booked.class);
+	        booked.setUser(user);
+	        booked.setCategory(category);
 
-		}
+	        Booked newBooked = this.bookedRepo.save(booked);
+
+	        return this.modelMapper.map(newBooked, BookedDto.class);
+	    }
+	    
+	   
 
 		 public Booked dtoToBooked(BookedDto bookedDto) {
 		        return this.modelMapper.map(bookedDto, Booked.class);
@@ -68,7 +80,7 @@ public class BookedServiceImpl implements BookedService{
 		}
 		
 		@Override
-	    public List<BookedDto> getBookedCoursesByUserId(Integer userId) {
+	    public List<BookedDto> getBookedsByUserId(Integer userId) {
 	        List<Booked> bookedCourses = bookedRepo.findByUserId(userId);
 	        if (bookedCourses.isEmpty()) {
 	            throw new ResourceNotFoundException("Booked Courses", "User id", userId);
@@ -77,5 +89,18 @@ public class BookedServiceImpl implements BookedService{
 	                .map(this::bookedToDto)
 	                .collect(Collectors.toList());
 	    }
+
+		@Override
+		public List<BookedDto> getBookedsByCategory(Integer categoryId) {
+			List<Booked>bookedCourses=bookedRepo.findByCategory(categoryId);
+			if(bookedCourses.isEmpty()) {
+				 return bookedCourses.stream()
+			                .map(this::bookedToDto)
+			                .collect(Collectors.toList());
+			}
+			return null;
+		}
+
+	
 	      
 }
